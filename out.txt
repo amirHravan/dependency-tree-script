@@ -1,0 +1,138 @@
+class LoanScreen {
+onViewCreated
+onResume
+}
+
+
+abstract class TutorialViewModel<T> {
+}
+
+
+class ActiveLoanTutorialViewModel {
+getTutorialUseCase
+}
+
+
+class LoanRequestTutorialViewModel {
+getTutorialUseCase
+}
+
+
+class LoanSettlementViewModel {
+}
+
+
+class LoanHistoryViewModel {
+}
+
+
+class LoanRequestViewModel {
+}
+
+
+class ActiveLoanViewModel {
+}
+
+
+class LoanLogger {
+}
+
+
+class LoanRepositoryImpl {
+getLoanInit
+getActiveLoan
+getLoanHistory
+submitPhoneNumber
+verifyCode
+getLoanDebt
+settleLoanDebt
+consumeSuccessfulSettleFlow
+getSuccessfulSettleFlow
+}
+
+
+class GetLoanInitUseCase {
+}
+
+
+class SubmitPhoneNumberUseCase {
+}
+
+
+class GetLoanHistoryUseCase {
+}
+
+
+class VerifyCodeUseCase {
+}
+
+
+class GetLoanRequestTutorialUseCase {
+}
+
+
+class GetSuccessfulSettleFlow {
+execute
+}
+
+
+class ConsumeSuccessfulSettleFlowUseCase {
+}
+
+
+class SettleLoanDebtUseCase {
+}
+
+
+class GetActiveLoanTutorialUseCase {
+}
+
+
+class GetLoanDebt {
+execute
+}
+
+
+class GetActiveLoanUseCase {
+}
+
+
+LoanScreen --> BaseFragment
+TutorialViewModel<T> --> MarkAppTutorialAsSeenUseCase
+TutorialViewModel<T> --> LoanLogger
+ActiveLoanTutorialViewModel --> GetActiveLoanTutorialUseCase
+ActiveLoanTutorialViewModel --> MarkAppTutorialAsSeenUseCase
+ActiveLoanTutorialViewModel --> LoanLogger
+LoanRequestTutorialViewModel --> GetLoanRequestTutorialUseCase
+LoanRequestTutorialViewModel --> MarkAppTutorialAsSeenUseCase
+LoanRequestTutorialViewModel --> LoanLogger
+LoanSettlementViewModel --> GetLoanDebtUseCase
+LoanSettlementViewModel --> GetBankPaymentUrlUseCase
+LoanSettlementViewModel --> SettleLoanDebtUseCase
+LoanSettlementViewModel --> LoanLogger
+LoanHistoryViewModel --> GetLoanHistoryUseCase
+LoanRequestViewModel --> GetLoyaltyUseCase
+LoanRequestViewModel --> GetLoanInitUseCase
+LoanRequestViewModel --> SubmitPhoneNumberUseCase
+LoanRequestViewModel --> VerifyCodeUseCase
+LoanRequestViewModel --> UpdateCreditUseCase
+LoanRequestViewModel --> LoanLogger
+ActiveLoanViewModel --> GetActiveLoanUseCase
+ActiveLoanViewModel --> GetLoanDebtUseCase
+ActiveLoanViewModel --> ConsumeSuccessfulSettleFlowUseCase
+ActiveLoanViewModel --> GetSuccessfulSettleFlowUseCase
+ActiveLoanViewModel --> LoanLogger
+LoanLogger --> GetUserUseCase
+LoanLogger --> LogEventUseCase
+LoanRepositoryImpl --> LoanApi
+GetLoanInitUseCase --> LoanRepository
+SubmitPhoneNumberUseCase --> LoanRepository
+GetLoanHistoryUseCase --> LoanRepository
+VerifyCodeUseCase --> LoanRepository
+GetLoanRequestTutorialUseCase --> GetAppTutorialsUseCase
+GetSuccessfulSettleFlow --> LoanRepository
+ConsumeSuccessfulSettleFlowUseCase --> LoanRepository
+SettleLoanDebtUseCase --> LoanRepository
+GetActiveLoanTutorialUseCase --> GetAppTutorialsUseCase
+GetLoanDebt --> LoanRepository
+GetActiveLoanUseCase --> LoanRepository
