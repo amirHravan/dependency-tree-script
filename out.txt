@@ -1,138 +1,95 @@
 class LoanScreen {
-onViewCreated
-onResume
+overrides onViewCreated
+overrides onResume
 }
-
-
-abstract class TutorialViewModel<T> {
-}
-
-
 class ActiveLoanTutorialViewModel {
-getTutorialUseCase
+overrides getTutorialUseCase
 }
-
-
 class LoanRequestTutorialViewModel {
-getTutorialUseCase
+overrides getTutorialUseCase
 }
-
-
-class LoanSettlementViewModel {
-}
-
-
-class LoanHistoryViewModel {
-}
-
-
-class LoanRequestViewModel {
-}
-
-
-class ActiveLoanViewModel {
-}
-
-
-class LoanLogger {
-}
-
-
 class LoanRepositoryImpl {
-getLoanInit
-getActiveLoan
-getLoanHistory
-submitPhoneNumber
-verifyCode
-getLoanDebt
-settleLoanDebt
-consumeSuccessfulSettleFlow
-getSuccessfulSettleFlow
+overrides getLoanInit
+overrides getActiveLoan
+overrides getLoanHistory
+overrides submitPhoneNumber
+overrides verifyCode
+overrides getLoanDebt
+overrides settleLoanDebt
+overrides consumeSuccessfulSettleFlow
+overrides getSuccessfulSettleFlow
 }
-
-
-class GetLoanInitUseCase {
-}
-
-
-class SubmitPhoneNumberUseCase {
-}
-
-
-class GetLoanHistoryUseCase {
-}
-
-
-class VerifyCodeUseCase {
-}
-
-
-class GetLoanRequestTutorialUseCase {
-}
-
-
 class GetSuccessfulSettleFlow {
-execute
+overrides execute
 }
-
-
-class ConsumeSuccessfulSettleFlowUseCase {
-}
-
-
-class SettleLoanDebtUseCase {
-}
-
-
-class GetActiveLoanTutorialUseCase {
-}
-
-
 class GetLoanDebt {
-execute
+overrides execute
+}
+interface LoanApi {
+getLoanInit()
+getActiveLoans()
+getLoanHistory()
+submitPhoneNumber()
+verifyCode()
+getLoanDebt()
+settleLoanDebt()
+}
+interface LoanRepository {
+getLoanInit()
+getActiveLoan()
+getLoanHistory()
+getLoanDebt()
+settleLoanDebt()
+consumeSuccessfulSettleFlow()
+getSuccessfulSettleFlow()
 }
 
 
-class GetActiveLoanUseCase {
-}
 
-
-LoanScreen --> BaseFragment
-TutorialViewModel<T> --> MarkAppTutorialAsSeenUseCase
-TutorialViewModel<T> --> LoanLogger
-ActiveLoanTutorialViewModel --> GetActiveLoanTutorialUseCase
-ActiveLoanTutorialViewModel --> MarkAppTutorialAsSeenUseCase
-ActiveLoanTutorialViewModel --> LoanLogger
-LoanRequestTutorialViewModel --> GetLoanRequestTutorialUseCase
-LoanRequestTutorialViewModel --> MarkAppTutorialAsSeenUseCase
-LoanRequestTutorialViewModel --> LoanLogger
-LoanSettlementViewModel --> GetLoanDebtUseCase
-LoanSettlementViewModel --> GetBankPaymentUrlUseCase
-LoanSettlementViewModel --> SettleLoanDebtUseCase
-LoanSettlementViewModel --> LoanLogger
-LoanHistoryViewModel --> GetLoanHistoryUseCase
-LoanRequestViewModel --> GetLoyaltyUseCase
-LoanRequestViewModel --> GetLoanInitUseCase
-LoanRequestViewModel --> SubmitPhoneNumberUseCase
-LoanRequestViewModel --> VerifyCodeUseCase
-LoanRequestViewModel --> UpdateCreditUseCase
-LoanRequestViewModel --> LoanLogger
-ActiveLoanViewModel --> GetActiveLoanUseCase
-ActiveLoanViewModel --> GetLoanDebtUseCase
-ActiveLoanViewModel --> ConsumeSuccessfulSettleFlowUseCase
-ActiveLoanViewModel --> GetSuccessfulSettleFlowUseCase
-ActiveLoanViewModel --> LoanLogger
-LoanLogger --> GetUserUseCase
-LoanLogger --> LogEventUseCase
-LoanRepositoryImpl --> LoanApi
-GetLoanInitUseCase --> LoanRepository
-SubmitPhoneNumberUseCase --> LoanRepository
-GetLoanHistoryUseCase --> LoanRepository
-VerifyCodeUseCase --> LoanRepository
-GetLoanRequestTutorialUseCase --> GetAppTutorialsUseCase
-GetSuccessfulSettleFlow --> LoanRepository
-ConsumeSuccessfulSettleFlowUseCase --> LoanRepository
-SettleLoanDebtUseCase --> LoanRepository
-GetActiveLoanTutorialUseCase --> GetAppTutorialsUseCase
-GetLoanDebt --> LoanRepository
-GetActiveLoanUseCase --> LoanRepository
+LoanScreen--------->BaseFragment
+LoanScreen--------->ActiveLoanViewModel
+LoanScreen--------->LoanRequestViewModel
+LoanScreen--------->LoanHistoryViewModel
+LoanScreen--------->LoanSettlementViewModel
+LoanScreen--------->ActiveLoanTutorialViewModel
+LoanScreen--------->LoanRequestTutorialViewModel
+LoanScreen--------->DeepLinkDataStore
+ActiveLoanViewModel------>GetActiveLoanUseCase
+ActiveLoanViewModel------>GetLoanDebtUseCase
+ActiveLoanViewModel------>ConsumeSuccessfulSettleFlowUseCase
+ActiveLoanViewModel------>GetSuccessfulSettleFlowUseCase
+ActiveLoanViewModel------>LoanLogger
+LoanRequestViewModel------->GetLoyaltyUseCase
+LoanRequestViewModel------->GetLoanInitUseCase
+LoanRequestViewModel------->SubmitPhoneNumberUseCase
+LoanRequestViewModel------->VerifyCodeUseCase
+LoanRequestViewModel------->UpdateCreditUseCase
+LoanRequestViewModel------->LoanLogger
+LoanHistoryViewModel-->GetLoanHistoryUseCase
+LoanSettlementViewModel------>GetLoanDebtUseCase
+LoanSettlementViewModel------>GetBankPaymentUrlUseCase
+LoanSettlementViewModel------>SettleLoanDebtUseCase
+LoanSettlementViewModel------>UpdateCreditUseCase
+LoanSettlementViewModel------>LoanLogger
+ActiveLoanTutorialViewModel---->GetActiveLoanTutorialUseCase
+ActiveLoanTutorialViewModel---->MarkAppTutorialAsSeenUseCase
+ActiveLoanTutorialViewModel---->LoanLogger
+LoanRequestTutorialViewModel---->GetLoanRequestTutorialUseCase
+LoanRequestTutorialViewModel---->MarkAppTutorialAsSeenUseCase
+LoanRequestTutorialViewModel---->LoanLogger
+TutorialViewModel--->MarkAppTutorialAsSeenUseCase
+TutorialViewModel--->LoanLogger
+LoanLogger--->GetUserUseCase
+LoanLogger--->LogEventUseCase
+GetActiveLoanTutorialUseCase-->GetAppTutorialsUseCase
+GetLoanRequestTutorialUseCase-->GetAppTutorialsUseCase
+SettleLoanDebtUseCase-->LoanRepository
+GetLoanHistoryUseCase-->LoanRepository
+GetLoanInitUseCase-->LoanRepository
+SubmitPhoneNumberUseCase-->LoanRepository
+VerifyCodeUseCase-->LoanRepository
+GetActiveLoanUseCase-->LoanRepository
+ConsumeSuccessfulSettleFlowUseCase-->LoanRepository
+LoanRepositoryImpl-->LoanApi
+GetSuccessfulSettleFlow-->LoanRepository
+GetLoanDebt-->LoanRepository

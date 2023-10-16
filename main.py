@@ -1,9 +1,11 @@
 import os
 import re
+import consts
+from graph import Graph, Node
 
 
 class KotlinInterface:
-    FUNCTION_REGEX = 'fun\\s*([\\w<>]*)\\s*[(][@\\w\\d\\s]*:*([\\w\\d\\s]*)[)]'
+    FUNCTION_REGEX = '([\\w]*\\s)?fun\\s*([\\w<>]*)\\s*[(][@\\w\\d\\s]*:*([\\w\\d\\s]*)[)]'
     ATTRIBUTE_REGEX = '((val)|(var))\\s*(\\w*)'
 
     def __init__(self, name):
@@ -18,6 +20,9 @@ class KotlinInterface:
     def _add_function(self, function):
         self.functions.append(function)
 
+    def get_signature(self):
+        return f"interface {self.name} " + "{"
+
     def __str__(self):
         return f"{self.name} : {self.functions} {self.attributes}"
 
@@ -27,7 +32,7 @@ class KotlinInterface:
     def collect(self, line):
         search_result = re.search(self.FUNCTION_REGEX, line)
         if search_result is not None:
-            self._add_function(search_result.group(0))
+            self._add_function(search_result.group(2))
         else:
             search_result = re.search(self.ATTRIBUTE_REGEX, line)
             if search_result is not None:
@@ -70,6 +75,10 @@ class KotlinClass:
         search_result = re.search(self.OVER_RIDE_REGEX, line)
         if search_result is not None:
             self._add_override(search_result.group(6))
+        search_result = re.search(consts.INJECT_VIEWMODEL_REGEX, line)
+        if search_result is not None:
+            self._add_input(search_result.group(2))
+
         elif self.checkForInput:
             search_result = re.search(self.INPUT_REGEX, line)
             if search_result is not None and search_result.group(2) not in EXCLUDE_LIST:
@@ -77,11 +86,6 @@ class KotlinClass:
         if "{" in line:
             self.checkForInput = False
 
-
-interface_list = []
-class_list = []
-EXCLUDE_LIST = ["CoroutineDispatcherProvider"]
-OUTPUT_FILE_PATH = "./out.txt"
 
 
 def print_files(path):
@@ -97,18 +101,20 @@ def print_files(path):
 
 
 def check_file(file_path):
-    CLASS_NAME_REGEX = '((\\w+)\\s+)?class\\s*(\\w+(<[\\w\\s]*>)?)\\s*'
-    INTERFACE_NAME_REGEX = 'interface\\s*([\\w<>]+)\\s*[^(]'
     # print(file_path)
     flag = None
+    if file_path.split(".").pop() != "kt":
+        return
     with open(file_path, 'r') as file:
         for line in file:
             if flag is None:
-                search_result = re.search(INTERFACE_NAME_REGEX, line)
+                search_result = re.search(consts.INTERFACE_NAME_REGEX, line)
                 if search_result is not None:
                     flag = KotlinInterface(search_result.group(1))
                     interface_list.append(flag)
-                search_result = re.search(CLASS_NAME_REGEX, line)
+                if "//" in line or "/*" in line:
+                    continue
+                search_result = re.search(consts.CLASS_NAME_REGEX, line)
                 if "class " in line:
                     class_type = search_result.group(2)
                     if class_type is not None:
@@ -116,7 +122,7 @@ def check_file(file_path):
                             continue
                     else:
                         class_type = ""
-                    flag = KotlinClass(search_result.group(3), class_type)
+                    flag = KotlinClass(search_result.group(4), class_type)
                     class_list.append(flag)
                 else:
                     continue
@@ -126,20 +132,46 @@ def check_file(file_path):
 
 
 def write_data_on_file():
-    with open(OUTPUT_FILE_PATH, "w") as file:
+
+    tree = Graph()
+    with open(OUTPUT_FILE_LOAN_PATH, "w") as file:
+        file.write("@startuml\n")
         for kt_class in class_list:
+            if len(kt_class.overrides) == 0:
+                continue
             file.write(kt_class.get_signature() + "\n")
             for class_property in kt_class.overrides:
-                file.write(class_property + "\n")
-            file.write("}\n\n\n")
+                file.write("overrides " + class_property + "\n")
+            file.write("}\n")
+        for interface in interface_list:
+            if len(interface.functions) == 0 and len(interface.attributes) == 0:
+                continue
+            file.write(interface.get_signature() + "\n")
+            for attribute in interface.attributes:
+                file.write(attribute + "\n")
+            for func in interface.functions:
+                file.write(func + "()" + "\n")
+            file.write("}\n")
+        file.write("\n\n\n")
         for kt_class in class_list:
+            tree.add_node(Node(kt_class.name, ""))
             for dependency in kt_class.inputs:
-                file.write(kt_class.name + " --> " + dependency + "\n")
-
+                tree.add_node(Node(dependency, ""))
+                tree.add_edge(kt_class.name, dependency)
+        for node in tree.nodes:
+            for child in node.children:
+                if child.node_name != "" and node.node_name != "":
+                    file.write(node.node_name + "-" * (len(node.children)+1) + ">" + child.node_name + "\n")
+        file.write("@enduml\n")
         file.close()
 
 
-directory_path = "/Users/user/Documents/Android Studio Project/driver-app/feature/loan/src"
+interface_list = []
+class_list = []
+EXCLUDE_LIST = ["CoroutineDispatcherProvider"]
+OUTPUT_FILE_LOAN_PATH = "/Users/user/Documents/Android Studio Project/driver-app/feature/loan/src/main/java/loan/utils/loan.puml"
+
+directory_path = "/Users/user/Documents/Android Studio Project/driver-app/feature/loan/src/main/java/loan"
 print_files(directory_path)
 
 for item in interface_list:
